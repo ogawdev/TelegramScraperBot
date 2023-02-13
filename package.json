@@ -25,6 +25,7 @@
   "homepage": "https://github.com/OgabekMengn1yozov/TelegramScraperBot#readme",
   "dependencies": {
     "dotenv": "^16.0.3",
+    "mongoose": "^6.9.1",
     "mtproto-storage-fs": "^0.3.1",
     "node-fetch": "^2.6.7",
     "nodemon": "^2.0.20",

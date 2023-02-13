@@ -1,12 +1,18 @@
-const { Telegraf } = require("telegraf");
+const { Telegraf, Markup } = require("telegraf");
 const { TOKEN } = require("./config");
 const session = require("./code/session");
 const stage = require("./scenes");
-const path = require("path");
-
-const bot = new Telegraf("1215151699:AAHJ_7eyE2hWX3OUwAATiYN4PBbfYmXfio4");
-// ?Storage get telegram.json
 const { Storage } = require("mtproto-storage-fs");
+
+// databases
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", true);
+
+mongoose
+  .connect("mongodb://127.0.0.1:27017/test")
+  .then(() => console.log("Connected!"));
+const bot = new Telegraf(TOKEN);
+// ?Storage get telegram.json
 const telegram = require("./utils/init");
 const app = {
   storage: new Storage("telegram.json"),
@@ -22,13 +28,17 @@ bot.catch((err, ctx) => {
 });
 
 bot.start(async (ctx) => {
-  // await checkLogin();
-  ctx.reply("Assalomu alaykum bu bot orqali kanallarni kuzatishingiz mumkin");
-
   if (!(await app.storage.get("signedin"))) {
     ctx.reply("Please login the telegram with set.js");
     return;
   }
+
+  ctx.reply(
+    "Assalomu alaykum bu bot orqali kanallarni kuzatishingiz mumkin",
+    Markup.keyboard(["🔍Search"]).resize()
+  );
+  return;
+
   // const dialogs = await telegram("messages.getDialogs");
   // const { chats } = dialogs;
   // console.log(chats);
@@ -81,6 +91,10 @@ bot.start(async (ctx) => {
   // });
 
   // console.log(joinChannelResult);
+});
+
+bot.hears("🔍Search", (ctx) => {
+  ctx.scene.enter("link");
 });
 
 module.exports = bot;
