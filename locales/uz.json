@@ -1,0 +1,19 @@
+{
+  "menu_home": "🏠 Bosh menu",
+  "search": "🔎 Izlash",
+  "contact": "📞 Aloqa",
+  "settings": "⚙️ Sozlamalar",
+  "lang_changed": "Til o'zgartirildi",
+  "channel_found": "Kanal topildi",
+  "search_by_date": "📅Sana bo'yicha qidirish",
+  "enter_channel": "Telegram kanal linkini quyidagicha kiriting",
+  "back": "⬅️Ortga",
+  "channel_not_found": "Kanal topilmadi ❌\nHavolani yoki foydalanuvchi nomini tekshirib ko'ring",
+  "send_time": "📅Jo'natish vaqti:\n\nXabarlar ma'lum bir kunda: 2023-02-13\nMa'lum bir kun vaqti: 2023-02-13:2023-02-20",
+  "no_messages": "Hozircha hech qanday xabar yo'q\n🔄Boshqa sanani yuboring",
+  "choose_one": "Quyidagilardan birini tanlang",
+  "load_all_posts": "Barcha xabarlar yuklash",
+  "send_word": "So'z yuborish",
+  "no_posts_found": "Xabarlar topilmadi",
+  "wait": "🕔Kutib turing"
+}

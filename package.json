@@ -25,6 +25,7 @@
   "homepage": "https://github.com/OgabekMengn1yozov/TelegramScraperBot#readme",
   "dependencies": {
     "dotenv": "^16.0.3",
+    "excel4node": "^1.8.0",
     "mongoose": "^6.9.1",
     "mtproto-storage-fs": "^0.3.1",
     "node-fetch": "^2.6.7",
@@ -32,6 +33,7 @@
     "prompt": "^1.0.0",
     "ramda": "^0.25.0",
     "telegraf": "^4.11.2",
+    "telegraf-i18n": "^6.6.0",
     "telegraf-session-redis": "^5.1.0",
     "telegram-mtproto": "^2.2.2"
   }
