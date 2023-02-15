@@ -9,11 +9,11 @@
   "enter_channel": "Enter the Telegram channel link following the instructions below",
   "back": "⬅️ Back",
   "channel_not_found": "Channel not found ❌\nCheck the correctness of the link or username",
-  "send_time": "📅Sending time:\n\nMessages on a specific day: 2023-02-13\nOn a specific day time: 2023-02-13:2023-02-20",
+  "send_time": "📅Sending time:\n\nFor example: 2022.10.31:2023.02.15",
   "no_messages": "There are no messages at the moment\n🔄Send another date",
   "choose_one": "Choose one of the following",
   "load_all_posts": "Load all posts",
   "send_word": "Send a word",
   "no_posts_found": "No posts found",
-  "wait": "🕔Please wait"
+  "wait": "🕔Wait. This may take a few minutes"
 }

@@ -9,11 +9,11 @@
   "enter_channel": "Telegram kanal linkini quyidagicha kiriting",
   "back": "⬅️Ortga",
   "channel_not_found": "Kanal topilmadi ❌\nHavolani yoki foydalanuvchi nomini tekshirib ko'ring",
-  "send_time": "📅Jo'natish vaqti:\n\nXabarlar ma'lum bir kunda: 2023-02-13\nMa'lum bir kun vaqti: 2023-02-13:2023-02-20",
+  "send_time": "📅Jo'natish vaqti:\n\nMasalan: 2022.10.31:2023.02.15",
   "no_messages": "Hozircha hech qanday xabar yo'q\n🔄Boshqa sanani yuboring",
   "choose_one": "Quyidagilardan birini tanlang",
   "load_all_posts": "Barcha xabarlar yuklash",
   "send_word": "So'z yuborish",
   "no_posts_found": "Xabarlar topilmadi",
-  "wait": "🕔Kutib turing"
+  "wait": "🕔Kutib turing. Bu bir necha daqiqa vaqt olishi mumkin"
 }

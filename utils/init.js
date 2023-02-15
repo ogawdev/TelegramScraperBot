@@ -1,89 +1,90 @@
 const telegram = require("./client");
 
-async function getAllMessages(channelId, accessHash, limit = 100000) {
-  // * Get all messages channel
-  let allMessages = [];
-  let offsetId = 0;
+async function getAllMessages(
+  channelId,
+  accessHash,
+  receivedDate,
+  limit = 100
+) {
+  try {
+    // * Get all messages channel
+    let allMessages = [];
+    let offsetId = 0;
+    let messageCount = 0;
 
-  while (true) {
-    const result = await telegram("messages.getHistory", {
-      peer: {
-        _: "inputPeerChannel",
-        channel_id: channelId,
-        access_hash: accessHash,
-      },
-      limit: 100,
-      offset_id: offsetId,
-      add_offset: 0,
-      max_id: 0,
-      min_id: 0,
-      hash: 0,
-    });
+    while (true) {
+      const result = await telegram("messages.getHistory", {
+        peer: {
+          _: "inputPeerChannel",
+          channel_id: channelId,
+          access_hash: accessHash,
+        },
+        limit: limit,
+        offset_id: offsetId,
+        add_offset: 0,
+        max_id: 0,
+        min_id: 0,
+        hash: 0,
+      });
 
-    const messages = result.messages;
+      const messages = result.messages;
 
-    if (!messages.length) {
-      break;
+      allMessages = allMessages.concat(messages);
+
+      if (
+        !messages.length ||
+        messages[messages.length - 1].date < receivedDate
+      ) {
+        break;
+      }
+      offsetId = messages[messages.length - 1].id;
+      messageCount += messages.length;
     }
-
-    allMessages = allMessages.concat(messages);
-    offsetId = messages[messages.length - 1].id;
+   
+    return allMessages;
+  } catch (e) {
+    return false;
   }
-
-  return allMessages;
 }
 
-function filteredDateMessages(text, allMessages, ctx) {
-  if (text.length == 10) {
-    const desiredDate = new Date(text);
+async function filteredDateMessages(startDate, endDate, messages) {
+  return messages.filter((message) => {
+    const messageDate = message.date;
+    return messageDate >= startDate && messageDate <= endDate;
+  });
+}
 
-    console.log(allMessages.length);
-    console.log(
-      allMessages.filter((message) => {
-        const messageDate = new Date(message.date * 1000);
-        return messageDate.toDateString() === desiredDate.toDateString();
-      })
-    );
-    return allMessages.filter((message) => {
-      const messageDate = new Date(message.date * 1000);
-      return messageDate.toDateString() === desiredDate.toDateString();
-    });
-  } else if (text.length == 21) {
-    const startDate = new Date(text.split(":")[0]);
-    const endDate = new Date(text.split(":")[1]);
+function toUnixDate(time) {
+  const regex = /^(\d{4})\.(\d{2})\.(\d{2}):(\d{4})\.(\d{2})\.(\d{2})$/;
+  const match = time.match(regex);
 
-    return allMessages.filter((message) => {
-      const messageDate = new Date(message.date * 1000);
-      return messageDate >= startDate && messageDate <= endDate;
-    });
+  if (!match) {
+    return false;
+  }
+
+  const startDate = Date.parse(`${match[1]}-${match[2]}-${match[3]}`) / 1000;
+  const endDate = Date.parse(`${match[4]}-${match[5]}-${match[6]}`) / 1000;
+
+  if (isNaN(startDate) || isNaN(endDate)) {
+    return false;
   } else {
-    ctx.reply("Sana xato kiritildi");
-    return;
+    return { startDate, endDate };
   }
 }
 
 async function sendMessages(messages, ctx) {
-  //Send posts
-  let counter = 0;
-  const interval = setInterval(() => {
-    if (counter >= messages.length) {
-      clearInterval(interval);
-      return;
-    }
-    // messages[counter]?._ == "messageService"
-    if (!(messages[counter]?.message || messages[counter]?.media?.caption)) {
-      counter++;
-      return;
-    }
-    ctx.reply(
-      `${
-        messages[counter].message ||
-        messages[counter]?.media?.caption ||
-        messages[counter].id
-      }\nDate: ${new Date(messages[counter].date * 1000)}`
+  const filteredMessages = messages.filter(
+    (msg) => msg.message || msg.media?.caption
+  );
+
+  for (const msg of filteredMessages) {
+    await ctx.reply(
+      `${msg.message || msg.media?.caption || msg.id}\nDate: ${new Date(
+        msg.date * 1000
+      )}`
     );
-    counter += 1;
-  }, 1000);
+    await new Promise((resolve) => setTimeout(resolve, 100)); // wait 1 second before sending the next message
+  }
 }
 
 //   Excel create
@@ -96,12 +97,16 @@ async function writeExel(messages) {
   ws.cell(1, 2).string("Channel_id");
   ws.cell(1, 3).string("Text");
   ws.cell(1, 4).string("Views");
-
-  for (let i = 0; i < messages.length; i++) {
+  const filteredMessages = messages.filter(
+    (msg) => msg.message || msg.media?.caption
+  );
+  for (let i = 0; i < filteredMessages.length; i++) {
     ws.cell(i + 2, 1).number(i + 1);
-    ws.cell(i + 2, 2).string(`${messages[i].to_id.channel_id}`);
-    ws.cell(i + 2, 3).string(`${messages[i].message}`);
-    ws.cell(i + 2, 4).string(`${messages[i].views}`);
+    ws.cell(i + 2, 2).string(`${filteredMessages[i].to_id.channel_id}`);
+    ws.cell(i + 2, 3).string(
+      `${filteredMessages[i]?.message || filteredMessages[i]?.media?.caption}`
+    );
+    ws.cell(i + 2, 4).string(`${filteredMessages[i].views}`);
   }
 
   ws.column(1).setWidth(5);
@@ -116,8 +121,11 @@ async function writeExel(messages) {
 }
 
 function searchMessages(messages, word) {
-  const result = messages.filter((message) =>
-    message.message?.toLowerCase().includes(word)
+  console.log(messages)
+  const result = messages.filter(
+    (message) =>
+      message.message?.toLowerCase().includes(word) ||
+      message.media?.caption?.toLowerCase().includes(word)
   );
   return result.length > 0 ? result : false;
 }
@@ -128,4 +136,5 @@ module.exports = {
   sendMessages,
   writeExel,
   searchMessages,
+  toUnixDate,
 };
